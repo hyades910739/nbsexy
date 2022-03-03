@@ -1,0 +1,31 @@
+- id: nbclean-cell-count
+  name: nbclean-cell-count
+  description: "check number of cell in notebook doesnot exceed provided number, default 20."
+  entry: nbclean --cell_count
+  language: python
+  types: [jupyter]
+- id: nbclean-is-ascending
+  name: nbclean-is-ascending
+  description: "check the cell number(execution_counts) is in ascending order."
+  entry: nbclean --is_ascending
+  language: python
+  types: [jupyter]
+- id: nbclean-has-md
+  name: nbclean-has-md
+  description: "check notebook has at least one markdown cell."
+  entry: nbclean --has_md
+  language: python
+  types: [jupyter]
+- id: nbclean-line-in-cell
+  name: nbclean-line-in-cell
+  description: "check all code cell in notebook have lines less than `max_line_in_cell`."
+  entry: nbclean --line_in_cell
+  language: python
+  types: [jupyter]
+- id: nbclean-total-line-in-nb
+  name: nbclean-total-line-in-nb
+  description: "check sum of lines in all code cells doesnot exceed `max_total_line_in_nb`."
+  entry: nbclean --total_line_in_nb
+  language: python
+  types: [jupyter]
+
