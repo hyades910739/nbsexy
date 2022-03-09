@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="nbsexy",
-    version="0.0.1",
+    version="0.0.4",
     author="hyades910739",
     author_email="hyades910739@gmail.com",
     description="A tool to make your notebook sexier than before.",
@@ -24,5 +24,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
-    install_requires=["colorama>=0.4.4"],
+    install_requires=["colorama>=0.4.4", "papermill==2.3.4"],
 )

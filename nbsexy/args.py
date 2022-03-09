@@ -44,23 +44,15 @@ class ParserGetter:
         return namespace
 
     @staticmethod
-    def _assert_at_least_one_check_is_called(
-        parser: argparse.ArgumentParser, namespace: argparse.Namespace
-    ) -> None:
+    def _assert_at_least_one_check_is_called(parser: argparse.ArgumentParser, namespace: argparse.Namespace) -> None:
         if not any(attrgetter(check)(namespace) for check in available_checks):
             parser.error("Please select at least one check!")
 
     @staticmethod
-    def _create_argparser() -> Tuple[
-        argparse.ArgumentParser, argparse.Namespace, List[str]
-    ]:
-        parser = argparse.ArgumentParser(
-            description="Check tool on a Jupyter notebook.", usage=USAGE
-        )
+    def _create_argparser() -> Tuple[argparse.ArgumentParser, argparse.Namespace, List[str]]:
+        parser = argparse.ArgumentParser(description="Check tool on a Jupyter notebook.", usage=USAGE)
         # parser.add_argument("command", help="Command to run, e.g. `cell_count`.")
-        parser.add_argument(
-            "root_dirs", nargs="+", help="Notebooks or directories to run command on."
-        )
+        parser.add_argument("root_dirs", nargs="+", help="Notebooks or directories to run command on.")
         parser.add_argument(
             "--cell_count",
             action="store_true",
@@ -85,6 +77,17 @@ class ParserGetter:
             "--total_line_in_nb",
             action="store_true",
             help="check sum of lines in all code cells doesnot exceed `max_total_line_in_nb`",
+        )
+        parser.add_argument(
+            "--execute",
+            action="store_true",
+            help="Try to run notebook and see if notebook can be run without any error raised.",
+        )
+        parser.add_argument(
+            "--execute_without_parameters",
+            action="store_true",
+            default=False,
+            help="Whether to use parameters found in notebooks when `execute`. Note that if no params found, nbsexy will execute without params.",
         )
         parser.add_argument(
             "--max_line_in_cell",

@@ -13,9 +13,7 @@ EXCLUDES = (
 )
 
 
-def collect_files_contain_given_suffix_from_paths(
-    paths: Iterable[str], suffix: str = ".ipynb"
-) -> Set[str]:
+def collect_files_contain_given_suffix_from_paths(paths: Iterable[str], suffix: str = ".ipynb") -> Set[str]:
     result = set()
     if not suffix.startswith("."):
         suffix = "." + suffix
@@ -31,9 +29,7 @@ def collect_files_contain_given_suffix_from_paths(
     return result
 
 
-def exclude_path_by_glob_patterns(
-    paths: Iterable[str], exclude_patterns: List[str], base_path=None
-) -> List[str]:
+def exclude_path_by_glob_patterns(paths: Iterable[str], exclude_patterns: List[str], base_path=None) -> List[str]:
     """
     base_path: if you want to aviod matching pattern from absolute path, you can specify a base_path to make paths become relative.
     """
@@ -41,18 +37,14 @@ def exclude_path_by_glob_patterns(
         exclude_patterns = [exclude_patterns]
     res = []
     for path in paths:
-        posix_path = (
-            Path(path).relative_to(base_path) if base_path is not None else Path(path)
-        )
+        posix_path = Path(path).relative_to(base_path) if base_path is not None else Path(path)
         have_pattern = any(posix_path.match(p) for p in exclude_patterns)
         if not have_pattern:
             res.append(path)
     return res
 
 
-def _iter_dir_and_get_all_files_with_given_suffix(
-    path: pathlib.PosixPath, suffix: str
-) -> Iterable[str]:
+def _iter_dir_and_get_all_files_with_given_suffix(path: pathlib.PosixPath, suffix: str) -> Iterable[str]:
 
     assert path.is_dir(), f"given path is not a dir: {str(path)}"
     return (str(i.resolve()) for i in path.rglob("*" + suffix))

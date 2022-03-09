@@ -27,7 +27,7 @@ def main() -> int:
         # iter checks and run check for all files one of a time.
         for check_name in available_checks:
             if attrgetter(check_name)(args_):
-                check = CheckFactory.get_check(check_name)
+                check = CheckFactory.get_check(check_name, args_)
                 flag = runner.run(files, check)
                 run_flags.append(flag)
 

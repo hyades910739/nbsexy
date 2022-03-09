@@ -45,6 +45,4 @@ def test_collect_files_contain_given_suffix_from_paths_correct():
 
 def test_input_non_dir_to_iter_dir_and_get_all_files_with_given_suffix_should_raise():
     with pytest.raises(AssertionError):
-        _ = _iter_dir_and_get_all_files_with_given_suffix(
-            Path("some_weird_path.qq"), ".qq"
-        )
+        _ = _iter_dir_and_get_all_files_with_given_suffix(Path("some_weird_path.qq"), ".qq")

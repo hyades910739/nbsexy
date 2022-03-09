@@ -28,4 +28,11 @@
   entry: nbsexy --total_line_in_nb
   language: python
   types: [jupyter]
+- id: nbsexy-execute
+  name: nbsexy-execute
+  description: "Execute your notebook and see if any error raised."
+  entry: nbsexy --execute
+  language: python
+  types: [jupyter]
+
 

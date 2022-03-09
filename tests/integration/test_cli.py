@@ -21,18 +21,14 @@ def test_zero_notebook_found_will_exit_0_with_warning():
 
 
 def test_no_root_dir_provided_will_exit():
-    output = subprocess.run(
-        ["nbsexy", "--cell_count"], stdout=PIPE, stderr=PIPE, universal_newlines=True
-    )
+    output = subprocess.run(["nbsexy", "--cell_count"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
     last_line = output.stderr.strip().split("\n")[-1]
     expected = "nbsexy: error: the following arguments are required: root_dirs"
     assert last_line == expected
 
 
 def test_no_check_flag_provided_will_exit():
-    output = subprocess.run(
-        ["nbsexy", "."], stdout=PIPE, stderr=PIPE, universal_newlines=True
-    )
+    output = subprocess.run(["nbsexy", "."], stdout=PIPE, stderr=PIPE, universal_newlines=True)
     last_line = output.stderr.strip().split("\n")[-1]
     expected = "nbsexy: error: Please select at least one check!"
     assert last_line == expected

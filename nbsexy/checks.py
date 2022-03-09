@@ -9,6 +9,8 @@ from nbsexy.utils import (
     check_all_code_cell_not_exceed_max_count,
     check_cell_count_not_exceed_max_count,
     check_execution_count_is_ascending,
+    check_nb_can_be_run_parameterizd_without_error_raised,
+    check_nb_can_be_run_without_error_raised,
     check_nb_contains_markdown_cell,
     check_total_line_from_code_cell_not_exceed_max_count,
     load_json,
@@ -19,13 +21,7 @@ NB_JSON = Dict[str, Any]  # parsed ipynb content in json format.
 KWARGS = TypeVar("KWARGS", bound=Dict[str, Any])
 
 
-available_checks = {
-    "cell_count",
-    "is_ascending",
-    "has_md",
-    "line_in_cell",
-    "total_line_in_nb",
-}
+available_checks = {"cell_count", "is_ascending", "has_md", "line_in_cell", "total_line_in_nb", "execute"}
 
 
 class Check:
@@ -60,7 +56,7 @@ class CheckFactory:
     "Just a boring factory."
 
     @staticmethod
-    def get_check(name: str) -> Check:
+    def get_check(name: str, namespace: Namespace) -> Check:
         if name == "cell_count":
             return cell_count
         elif name == "is_ascending":
@@ -71,6 +67,11 @@ class CheckFactory:
             return line_in_cell
         elif name == "total_line_in_nb":
             return total_line_in_nb
+        elif name == "execute":
+            if namespace.execute_without_parameters is True:
+                return execute
+            else:
+                return execute_with_parameter
         else:
             raise ValueError(f"check not found: {name}")
 
@@ -83,9 +84,7 @@ class CheckRunner:
         self._errored_dict = dict()
         self._flags = list()
 
-    def run(
-        self, ipynb_filenames: Union[List[str], Set[str]], check: Check
-    ) -> int:
+    def run(self, ipynb_filenames: Union[List[str], Set[str]], check: Check) -> int:
         """Run one check on several notebooks"""
 
         self._errored_dict = dict()
@@ -93,6 +92,8 @@ class CheckRunner:
         kwargs = self._create_kwargs_for_check(check)
         self._print_header_msg(check, kwargs)
         for filename in ipynb_filenames:
+            # add name to kwargs:
+            kwargs["filename"] = filename
             flag = self._run_one_file(filename, check, kwargs)
             self._flags.append(flag)
 
@@ -101,11 +102,7 @@ class CheckRunner:
         return run_success_flag
 
     def _print_header_msg(self, check: Check, kwargs: KWARGS) -> None:
-        msg = (
-            Style.BRIGHT
-            + Fore.BLUE
-            + f"{check.name}:  {check.header_msg.format(**kwargs)}"
-        )
+        msg = Style.BRIGHT + Fore.BLUE + f"{check.name}:  {check.header_msg.format(**kwargs)}"
         msg = msg + Style.RESET_ALL + Fore.RESET
         print(msg, end="\n\n")
 
@@ -113,9 +110,7 @@ class CheckRunner:
         "pair the kwargs specified by check instance and argparse.Namespace"
         return {kw: attrgetter(kw)(self._args) for kw in check.kwargs_list}
 
-    def _run_one_file(
-        self, filename: str, check: Check, kwargs: KWARGS
-    ) -> Union[bool, str]:
+    def _run_one_file(self, filename: str, check: Check, kwargs: KWARGS) -> Union[bool, str]:
         """run check on one file.
 
         Returns:
@@ -157,7 +152,9 @@ class CheckRunner:
 
     def _error_handler(self):
         for k, v in self._errored_dict.items():
-            print(k, v)
+            print(f"{k}: ")
+            print(f"{v}")
+            print("-----")
 
 
 cell_count = Check(
@@ -229,6 +226,35 @@ total_line_in_nb = Check(
         {Fore.RED}
         Some of your notebook have too many lines.
         You should consider split your notebook to several notebook with different purpose.
+        {Fore.RESET}
+    """
+    ),
+)
+
+execute = Check(
+    name="execute",
+    fun=check_nb_can_be_run_without_error_raised,
+    kwargs_list=[],
+    header_msg="check notebook can be executed and no error raised: ",
+    failed_msg=dedent(
+        f"""
+        {Fore.RED}
+        Some of your notebook failed to execute.
+        You should re-run your notebook and make sure no error raised.
+        {Fore.RESET}
+    """
+    ),
+)
+execute_with_parameter = Check(
+    name="execute",
+    fun=check_nb_can_be_run_parameterizd_without_error_raised,
+    kwargs_list=[],
+    header_msg="check notebook can be (parametered) executed and no error raised: ",
+    failed_msg=dedent(
+        f"""
+        {Fore.RED}
+        Some of your notebook failed to execute.
+        You should re-run your notebook and make sure no error raised.
         {Fore.RESET}
     """
     ),
