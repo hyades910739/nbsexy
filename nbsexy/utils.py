@@ -149,5 +149,5 @@ def _try_to_eval(name: str, val: str) -> Any:
     try:
         new = eval(val)
     except Exception:
-        raise ValueError(f"failed to eval parameter {name} with value {val}")
+        raise ValueError(f"failed to eval parameter {name} with value: '{val}'")
     return new

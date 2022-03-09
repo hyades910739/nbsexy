@@ -138,7 +138,7 @@ class CheckRunner:
             color = Fore.RED + Back.YELLOW
         print(
             f"  * {filename}: ",
-            Style.BRIGHT + color + str(flag) + Fore.RESET + Back.RESET,
+            Style.BRIGHT + color + str(flag) + Fore.RESET + Back.RESET + Style.RESET_ALL,
         )
 
     def _fail_handler(self, check: Check) -> int:
