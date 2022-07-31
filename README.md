@@ -83,20 +83,21 @@ default_language_version:
   python: python3.6
 repos:
   - repo: https://github.com/hyades910739/nbsexy
-    rev: 0.0.6a
+    rev: v0.0.6a
     hooks:
-      - id: nbsexy-cell-count
+      # run multiple checks as a hook, and specify check you want in args.
+      - id: nbsexy
         verbose: true
-        args: [--max_cell_count=15]
+        pass_filenames: false
+        args: [--cell_count, --has_md, --max_cell_count=15, .]
+      # run single check as a hook
       - id: nbsexy-is-ascending
         verbose: true
-      - id: nbsexy-has-md
-        verbose: true
-      - id: nbsexy-line-in-cell
-        verbose: true
-      - id: nbsexy-total-line-in-nb
-        verbose: true
+        pass_filenames: false
+        args: [.]
 ```
+Note that you should use `pass_filenames: false` and add path in `args` (like `.`), or the nbsexy will be called several times, make your console not sexy at all :( .
+
 
 3. install hooks:
 ```
