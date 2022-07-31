@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="nbsexy",
-    version="0.0.6",
+    version="0.0.6a",
     author="hyades910739",
     author_email="hyades910739@gmail.com",
     description="A tool to make your notebook sexier than before.",

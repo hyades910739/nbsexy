@@ -1,3 +1,9 @@
+- id: nbsexy
+  name: nbsexy
+  description: "Run nbsexy and specify your check by args."
+  entry: nbsexy
+  language: python
+  types: [jupyter]
 - id: nbsexy-cell-count
   name: nbsexy-cell-count
   description: "check number of cell in notebook doesnot exceed provided number, default 20."

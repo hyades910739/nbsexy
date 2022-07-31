@@ -22,7 +22,10 @@ class Launcher:
 
     def __init__(self) -> None:
         self.start_time = time.time()
-        self.terminal_size = shutil.get_terminal_size()
+        self.terminal_size = shutil.get_terminal_size((80, 24))
+        self.n_columns = self.terminal_size.columns if self.terminal_size.columns > 20 else 80
+
+
         self.args_ = ParserGetter.get_args()
         self.verbose = self.args_.verbose
 
@@ -87,7 +90,8 @@ class Launcher:
         header = self._add_separator_to_line(" errors ")
         print("")
         print(header)
-        sep = "-" * self.terminal_size.columns
+
+        sep = "-" * self.n_columns
         for check_name, check_results in check_result_dict.items():
             for filename, check_result in check_results.items():
                 if check_result.status == "Error":
@@ -118,7 +122,7 @@ class Launcher:
         """
         if line_len is None:
             line_len = len(line)
-        n_pad = self.terminal_size.columns - line_len
+        n_pad = self.n_columns - line_len
         pad_left, pad_right = math.ceil(n_pad / 2), math.floor(n_pad / 2)
         new_line = "=" * pad_left + line + "=" * pad_right
         new_line = Fore.YELLOW + new_line + Style.RESET_ALL
