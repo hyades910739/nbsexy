@@ -83,7 +83,7 @@ default_language_version:
   python: python3.6
 repos:
   - repo: https://github.com/hyades910739/nbsexy
-    rev: 0.0.6
+    rev: 0.0.6a
     hooks:
       - id: nbsexy-cell-count
         verbose: true
