@@ -26,14 +26,6 @@ USAGE = dedent(
 
 
 class ParserGetter:
-    flag_and_required_args_dict: Dict[str, Tuple[str]] = {
-        "cell_count": ("max_cell_count",),
-        "is_ascending": [],
-        "has_md": [],
-        "line_in_cell": (),
-        "total_line_in_nb": [],
-    }
-
     def __init__(self):
         raise NotImplementedError("not for create instance")
 
@@ -44,15 +36,24 @@ class ParserGetter:
         return namespace
 
     @staticmethod
-    def _assert_at_least_one_check_is_called(parser: argparse.ArgumentParser, namespace: argparse.Namespace) -> None:
+    def _assert_at_least_one_check_is_called(
+        parser: argparse.ArgumentParser, namespace: argparse.Namespace
+    ) -> None:
         if not any(attrgetter(check)(namespace) for check in available_checks):
             parser.error("Please select at least one check!")
 
     @staticmethod
-    def _create_argparser() -> Tuple[argparse.ArgumentParser, argparse.Namespace, List[str]]:
-        parser = argparse.ArgumentParser(description="Check tool on a Jupyter notebook.", usage=USAGE)
-        # parser.add_argument("command", help="Command to run, e.g. `cell_count`.")
-        parser.add_argument("root_dirs", nargs="+", help="Notebooks or directories to run command on.")
+    def _create_argparser() -> Tuple[
+        argparse.ArgumentParser, argparse.Namespace, List[str]
+    ]:
+        parser = argparse.ArgumentParser(
+            description="Check tool on a Jupyter notebook.",
+            usage=USAGE,
+            allow_abbrev=True,
+        )
+        parser.add_argument(
+            "root_dirs", nargs="+", help="Notebooks or directories to run command on."
+        )
         parser.add_argument(
             "--cell_count",
             action="store_true",
@@ -82,6 +83,13 @@ class ParserGetter:
             "--execute",
             action="store_true",
             help="Try to run notebook and see if notebook can be run without any error raised.",
+        )
+        parser.add_argument(
+            "-v",
+            "--verbose",
+            action="store_true",
+            default=False,
+            help="Whether to print check result for file that success.",
         )
         parser.add_argument(
             "--execute_without_parameters",

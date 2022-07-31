@@ -16,7 +16,7 @@ def test_zero_notebook_found_will_exit_0_with_warning():
         stderr=PIPE,
         universal_newlines=True,
     )
-    assert output.stdout == "WARNING: FOUND 0 NOTEBOOKS!!!\n"
+    assert "FOUND 0 NOTEBOOKS! EXIT.\n" in output.stdout
     assert output.returncode == 0
 
 
@@ -42,7 +42,10 @@ def test_one_check_success_will_exit_with_0():
         stderr=PIPE,
         universal_newlines=True,
     )
-    assert output.stdout != "WARNING: FOUND 0 NOTEBOOKS!!!\n"
+    assert "FOUND 0 NOTEBOOKS" not in output.stdout
+    assert "error," not in output.stdout
+    assert "failed," not in output.stdout
+
     assert output.returncode == 0
 
 
@@ -54,7 +57,10 @@ def test_several_check_success_will_exit_with_0():
         stderr=PIPE,
         universal_newlines=True,
     )
-    assert output.stdout != "WARNING: FOUND 0 NOTEBOOKS!!!\n"
+    assert "FOUND 0 NOTEBOOKS" not in output.stdout
+    assert "error," not in output.stdout
+    assert "failed," not in output.stdout
+
     assert output.returncode == 0
 
 
@@ -89,8 +95,34 @@ def test_one_of_check_for_several_file_failed_should_exit_1():
         stderr=PIPE,
         universal_newlines=True,
     )
+
     assert output.returncode == 1
 
+def test_print_success_result_when_verbose_flag_is_set():
+    path = os.path.join(notebook_base_path, "successed", "valid_nb_1.ipynb")
+    output = subprocess.run(
+        ["nbsexy", path, "--is_ascending", "--cell_count", "-v"],
+        stdout=PIPE,
+        stderr=PIPE,
+        universal_newlines=True,
+    )
+    success_filename = 'valid_nb_1.ipynb'
+    assert success_filename in output.stdout
+    assert output.returncode == 0
+
+def test_succeess_result_is_not_printed_when_verbose_flag_is_not_set():
+    path1 = os.path.join(notebook_base_path, "failed", "nb_with_wrong_order.ipynb")
+    path2 = os.path.join(notebook_base_path, "successed", "valid_nb_1.ipynb")
+    output = subprocess.run(
+        ["nbsexy", path1, path2, "--is_ascending", "--cell_count"],
+        stdout=PIPE,
+        stderr=PIPE,
+        universal_newlines=True,
+    )
+
+    success_filename = 'valid_nb_1.ipynb'
+    assert output.returncode == 1
+    assert success_filename not in output.stdout
 
 def test_exclude_patterns_do_exclude():
     path1 = os.path.join(notebook_base_path, "failed", "nb_with_wrong_order.ipynb")

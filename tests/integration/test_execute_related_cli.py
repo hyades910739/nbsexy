@@ -19,6 +19,7 @@ def test_unknown_kernelspec_should_fail():
         stderr=PIPE,
         universal_newlines=True,
     )
+
     assert output.returncode == 1
     assert "jupyter_client.kernelspec.NoSuchKernel" in output.stdout
 
@@ -45,6 +46,15 @@ def test_execute_without_parameter_success():
     )
     assert output.returncode == 0
 
+def test_execute_with_notebook_that_read_files_success():
+    path = os.path.join(notebook_base_path, "successed", "notebook_that_read_file.ipynb")
+    output = subprocess.run(
+        ["nbsexy", path, "--execute"],
+        stdout=PIPE,
+        stderr=PIPE,
+        universal_newlines=True,
+    )
+    assert output.returncode == 0
 
 def test_execute_with_parameter_but_no_parameter_in_nb_success():
     path = os.path.join(notebook_base_path, "successed", "valid_nb_1.ipynb")
@@ -129,7 +139,6 @@ def test_execute_without_parameter_but_parameter_not_valid_should_suceess():
         universal_newlines=True,
     )
     assert output.returncode == 0
-
 
 def test_check_run_and_nb_raise_error_during_run_should_raise():
     path = os.path.join(notebook_base_path, "failed", "nb_that_raise_error.ipynb")
